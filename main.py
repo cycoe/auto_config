@@ -11,12 +11,15 @@ def plus(item, direct):
 	else:
 		sou_dir = ' '.join(map(lambda foo:"$HOME/"+foo, file_name[item].split()))
 		des_dir = item+"/"
-		if(not os.path.exists(des_dir)):
-			os.system("mkdir "+ des_dir)
 	return (sou_dir, des_dir)
 
 def copy(dirs):
 	try:
+		if(os.path.exists(dirs[1])):
+			print("delete the original %s..." %dirs[1])
+			os.system("sudo rm -rf " + dirs[1])
+		if(not os.path.exists(dirs[1])):
+			os.system("mkdir " + dirs[1])
 		print("copy %s to %s..." %(dirs[0], dirs[1]))
 		os.system("sudo cp -r %s %s" %(dirs[0], dirs[1]))
 	except:
