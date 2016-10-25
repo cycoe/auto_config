@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import os
+import os, sys
 
 file_name = {"zsh_config":".zshrc .oh-my-zsh"}
 
@@ -26,6 +26,50 @@ def copy(dirs):
 		print("no such directory!")
 	print("Done!")
 
+class Parser(object):
+	def __init__(self):
+		self.argv = sys.argv
+	def solve(self):
+		if(self.argv[1][1] not in ('i', 'b')):
+			try:
+				raise Argv_error(0)
+			except Argv_error as e:
+				print("unrecognized arguments!")
+				exit(0)
+		elif(self.argv[1][1] == 'i'):
+			return 1
+		else:
+			return 2
+	def par(self):
+		if(len(self.argv) > 2):
+			try:
+				raise Argv_error(len(self.argv))
+			except Argv_error as e:
+				print("%i arguments are commited, 1 are required!" %(e.value-1))
+				exit(0)
+		elif(len(self.argv) == 1):
+			print("welcome to auto_config tools\n\n")
+			print("Do you want to install or backup?\n")
+			print("# 1.install")
+			print("# 2.backup")
+			direct = input("choice:")
+			if(direct in ('1', '2')):
+				return direct
+			else:
+				try:
+					raise Argv_error(0)
+				except Argv_error as e:
+					print("unrecognized arguments!")
+					exit(0)
+		else:
+			return self.solve()
+
+class Argv_error(Exception):
+	def __init__(self, value):
+		self.value = value
+	def __str__(self):
+		return repr(self.value)
+
 
 
 class Ask_to_do(object):
@@ -39,12 +83,11 @@ class Ask_to_do(object):
 			print("\nfetching infomation about %s..." %self.item)
 			copy(plus(self.item, direct))
 
+
+
 def main():
-	print("welcome to auto_config tools\n\n")
-	print("Do you want to install or backup?\n")
-	print("# 1.install")
-	print("# 2.backup")
-	direct = input("choice:")
+	parser = Parser()
+	direct = parser.par()
 	for item in file_name:
 		Ask_to_do(item).deal_with(Ask_to_do(item).do_or_not(), direct)
 	print("All done! enjoy!")
